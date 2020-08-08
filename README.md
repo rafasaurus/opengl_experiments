@@ -1,0 +1,26 @@
+# inspired from The Cherno tutorials of OpenGL
+
+- [x] Using Modern OpenGL
+- [ ] Vertex Buffers, Draw Triangle
+- [ ] Vertex Attributes
+- [ ] How Shaders work in
+- [ ] Writing a Shader
+- [ ] How I dial with sahders
+- [ ] Index buffers
+- [ ] dealing with Errors
+- [ ] Uniforms
+- [ ] Vertex Array
+- [ ] Abstracting 
+- [ ] Buffer Layout
+- [ ] Sahder Absataraction
+- [ ] Writing a basic renderre
+- [ ] Textures
+- [ ] Blending
+- [ ] Maths
+- [ ] Projection Matrices
+- [ ] Model view projection
+- [ ] ImGUI
+- [ ] Rendering multible objects
+- [ ] Setting up Test Freamwork
+- [ ] Creating Tests
+- [ ] Creating a texture
