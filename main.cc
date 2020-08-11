@@ -26,16 +26,26 @@ int main(void)
 
     std::cout << glGetString(GL_VERSION) << std::endl;
 
+    // data to draw
+    float positions[6] = {
+        -0.5f, -0.5f,
+        0.0f, 0.5f,
+        0.5f, -0.5f
+    };
+
+    // giving opengl the data
+    unsigned int buffer = 0; // object Id
+    glGenBuffers(1, &buffer); // create buffer
+    glBindBuffer(GL_ARRAY_BUFFER, buffer); // selecting the buffer
+    glBufferData(GL_ARRAY_BUFFER, 6*sizeof(float), positions, GL_STATIC_DRAW); // defining the data of buffer
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
-        glBegin(GL_TRIANGLES);
-        glVertex2f(-0.5f, -0.5f);
-        glVertex2f(0.0f, 0.5f);
-        glVertex2f(0.5f, -0.5f);
-        glEnd();
+        // This code is not rendering, need to implement shader
+        glDrawArrays(GL_TRIANGLES, 0, 3);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
