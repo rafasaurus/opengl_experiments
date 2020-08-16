@@ -4,6 +4,35 @@
 #include <fstream>
 #include <sstream>
 
+#include <signal.h>
+void __debugbreak()
+{
+    std::cout << "[ASSERTION]" << std::endl;
+    raise(SIGTRAP);
+}
+#define ASSERT(x) if (!(x)) __debugbreak();
+
+#define GLCall(x) GlClearError();\
+    x;\
+    ASSERT(GlLogCall(#x, __FILE__, __LINE__))
+
+static void GlClearError()
+{
+    while (glGetError() != GL_NO_ERROR);
+}
+
+static bool GlLogCall(const char* function,
+        const char* file,
+        int line)
+{
+    while(GLenum error = glGetError())
+    {
+        std::cout << "[OpenGL error] (" << error << ")" << function << " " << file << ":" << line << std::endl;
+        return false;
+    }
+    return true;
+}
+
 enum class
 ShaderType
 {
@@ -141,7 +170,7 @@ int main(void)
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
         // This code is not rendering, need to implement shader
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
