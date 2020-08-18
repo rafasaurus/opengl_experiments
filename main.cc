@@ -116,6 +116,9 @@ int main(void)
     /* Initialize the library */
     if (!glfwInit())
         return -1;
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
@@ -147,11 +150,16 @@ int main(void)
         2, 3, 0 //dexxond traingle for drawing a square
     };
 
+    // if core profile is on we should create vertex array object
+    unsigned int vao;
+    GLCall(glGenVertexArrays(1, &vao));
+    GLCall(glBindVertexArray(vao));
+
     // giving opengl the data
     unsigned int buffer; // object Id
     glGenBuffers(1, &buffer); // create buffer
     glBindBuffer(GL_ARRAY_BUFFER, buffer); // selecting the buffer
-    glBufferData(GL_ARRAY_BUFFER, 6*2*sizeof(float), positions, GL_STATIC_DRAW); // defining the data of buffer
+    glBufferData(GL_ARRAY_BUFFER, 4*2*sizeof(float), positions, GL_STATIC_DRAW); // defining the data of buffer
 
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float)*2, 0); // layout of the buffer, binding the attributes to index 0 via vertexAttribPointer
@@ -165,26 +173,40 @@ int main(void)
     unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
     glUseProgram(shader);
 
+
     int location = glGetUniformLocation(shader, "u_Color");
     ASSERT(location != -1);
     GLCall(glUniform4f(location, 0.1f, 0.3f, 0.1f, 1.0f));
     float red = 0.0f;
     float increment = 0.02f;
+
+    // unbind everything
+    glUseProgram(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
         // This code is not rendering, need to implement shader
+        GLCall(glUseProgram(shader));
+        GLCall(glUniform4f(location, red, 1-red, red, 1.0f));
+
+        // linking vertex array with vao
+        GLCall(glBindVertexArray(vao));
+
+        GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
+
+        GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+
         if (red > 1.0f)
             increment = -0.02f;
         else if (red < 0.0f)
             increment = 0.02f;
 
         red += increment;
-
-        GLCall(glUniform4f(location, red, 1-red, red, 1.0f));
-        GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
