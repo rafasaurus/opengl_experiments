@@ -23,6 +23,11 @@ project "main"
        "GL"
    }
 
+   cleancommands {
+       "make clean",
+       "rm -rf obj bin main"
+   }
+
    files { "**.h", "**.cc" }
 
    filter "configurations:Debug"
