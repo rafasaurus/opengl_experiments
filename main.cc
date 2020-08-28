@@ -3,35 +3,9 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-
-#include <signal.h>
-void __debugbreak()
-{
-    std::cout << "[ASSERTION]" << std::endl;
-    raise(SIGTRAP);
-}
-#define ASSERT(x) if (!(x)) __debugbreak();
-
-#define GLCall(x) GlClearError();\
-    x;\
-    ASSERT(GlLogCall(#x, __FILE__, __LINE__))
-
-static void GlClearError()
-{
-    while (glGetError() != GL_NO_ERROR);
-}
-
-static bool GlLogCall(const char* function,
-        const char* file,
-        int line)
-{
-    while(GLenum error = glGetError())
-    {
-        std::cout << "[OpenGL error] (" << error << ")" << function << " " << file << ":" << line << std::endl;
-        return false;
-    }
-    return true;
-}
+#include "Renderer.h"
+#include "VertexBuffer.h"
+#include "IndexBuffer.h"
 
 enum class
 ShaderType
@@ -156,19 +130,12 @@ int main(void)
     GLCall(glBindVertexArray(vao));
 
     // giving opengl the data
-    unsigned int buffer; // object Id
-    glGenBuffers(1, &buffer); // create buffer
-    glBindBuffer(GL_ARRAY_BUFFER, buffer); // selecting the buffer
-    glBufferData(GL_ARRAY_BUFFER, 4*2*sizeof(float), positions, GL_STATIC_DRAW); // defining the data of buffer
+    VertexBuffer vb(positions, 4 * 2 * sizeof(float));
 
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float)*2, 0); // layout of the buffer, binding the attributes to index 0 via vertexAttribPointer
 
-    unsigned int ibo; // index buffer object
-    glGenBuffers(1, &ibo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW);
-
+    IndexBuffer ib(indices, 6);
     ShaderProgramSource source = ParseShader("res/shaders/Basic.shader");
     unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
     glUseProgram(shader);
@@ -196,8 +163,7 @@ int main(void)
 
         // linking vertex array with vao
         GLCall(glBindVertexArray(vao));
-
-        GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
+        ib.Bind();
 
         GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 
