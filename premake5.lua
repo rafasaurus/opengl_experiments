@@ -1,5 +1,5 @@
 -- premake5.lua
-workspace "HelloWorld"
+workspace "Opengl App"
    configurations { "Debug", "Release" }
 
 project "main"
@@ -25,7 +25,9 @@ project "main"
 
    cleancommands {
        "make clean",
-       "rm -rf obj bin main"
+       "rm -rf obj bin main",
+       "rm -rf *.o",
+
    }
 
    files { "**.h", "**.cc" }

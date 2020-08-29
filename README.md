@@ -9,10 +9,9 @@
 - [x] Index buffers
 - [x] dealing with Errors
 - [x] Uniforms
-- [ ] Vertex Array
-- [ ] Abstracting 
-- [ ] Buffer Layout
-- [ ] Sahder Absataraction
+- [x] Vertex Array
+- [x] Abstracting OpenGL into Classes
+- [x] Shader Absataraction
 - [ ] Writing a basic renderre
 - [ ] Textures
 - [ ] Blending
